@@ -1,4 +1,4 @@
-import React from 'react';
+
 import './App.css';
 import IconButton from '@mui/material/IconButton';
 import Box from '@mui/material/Box';
@@ -19,8 +19,12 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
+import PersonIcon from '@mui/icons-material/Person';
+import React, { lazy,Suspense } from 'react'
+import { Routes, Route } from 'react-router-dom';
+const User = lazy(()=> import ('./pages/ListUser'))
+const HomePage = lazy(()=> import ('./pages/HomePage'))
+const NewUser = lazy(()=> import ('./pages/NewUser'))
 
 const drawerWidth = 240;
 const ColorModeContext = React.createContext({ toggleColorMode: () => { } });
@@ -94,7 +98,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 function App() {
   const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(true);
   const colorMode = React.useContext(ColorModeContext);
 
   const handleDrawerOpen = () => {
@@ -116,7 +120,7 @@ function App() {
           <Typography variant='h6' noWrap component='div'>
             My APP
           </Typography>
-          <Typography variant='h6' noWrap component='div' sx={{ position:'relative',left:1400 }}>
+          <Typography variant='h6' noWrap component='div' sx={{ position: 'relative', left: 1400 }}>
             {theme.palette.mode} mode
             <IconButton sx={{ ml: 1 }} onClick={colorMode.toggleColorMode} color='inherit'>
               {theme.palette.mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
@@ -130,34 +134,27 @@ function App() {
         </DrawerHeader>
         <Divider />
         <List>
-          {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-            <ListItem key={text} disablePadding sx={{ display: 'block' }}>
-              <ListItemButton sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5 }}>
-                <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center' }}>
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                </ListItemIcon>
-                <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
-              </ListItemButton>
-            </ListItem>
-          ))}
+          <ListItem disablePadding sx={{ display: 'block' }}>
+            <ListItemButton sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5 }} href='/user'>
+              <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center' }}>
+                <PersonIcon/>
+              </ListItemIcon>
+              <ListItemText primary="User" sx={{ opacity: open ? 1 : 0 }} />
+            </ListItemButton>
+          </ListItem>
+
         </List>
         <Divider />
-        <List>
-          {['All mail', 'Trash', 'Spam'].map((text, index) => (
-            <ListItem key={text} disablePadding sx={{ display: 'block' }}>
-              <ListItemButton sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5 }}>
-                <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center', }}>
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                </ListItemIcon>
-                <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
       </Drawer>
-      <Box component='main'  sx={{ flexGrow: 1, p: 3 }}>
+      <Box component='main' sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />
-        
+        <Routes>
+            <Route path="/"  element={<Suspense><HomePage /></Suspense>} />
+            <Route path='/user' element={<Suspense><User /></Suspense>} >
+              <Route path='/user/newuser' element={<Suspense><NewUser /></Suspense>} />
+            </Route>
+        </Routes>
+  
       </Box>
     </Box>
   );
@@ -175,11 +172,11 @@ export default function ToggleColorMode() {
   );
 
   const theme = React.useMemo(() =>
-      createTheme({
-        palette: {
-          mode,
-        },
-      }),
+    createTheme({
+      palette: {
+        mode,
+      },
+    }),
     [mode],
   );
 
