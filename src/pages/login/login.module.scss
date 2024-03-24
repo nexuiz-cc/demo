@@ -13,12 +13,10 @@
 }
 .input {
   width: 350px;
+  height: 60px;
   padding-bottom: 10px;
 }
-.input error{
-  width: 350px;
-  padding-bottom: 10px;
-}
+
 .card {
   align-content: center;
   position: fixed;
@@ -40,11 +38,21 @@
   position: relative;
 }
 
-.alert {
+.alert1 {
   display: flex;
   align-content: center;
   justify-content: center;
-  width: 250px;
+  width:450px;
   font-size: 20px;
+  font-family: 'Calling Code';
+}
+
+.alert2 {
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  width:450px;
+  font-size: 20px;
+  margin-top: 70px;
   font-family: 'Calling Code';
 }
