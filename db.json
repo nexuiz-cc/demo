@@ -1,3 +1,60 @@
 {
-  "users": [{ "id": 1, "username": "admin", "password": "123456", "role": "admin", "display": "light" }]
+  "users": [
+    {
+      "id": "9143jp",
+      "username": "user",
+      "password": "123456",
+      "firstName": "Kelvin",
+      "lastName": "Langosh",
+      "email": "Jerod14@hotmail.com",
+      "state": "Ohio",
+      "role": "user",
+      "display": "light"
+    },
+    {
+      "id": "9143rp",
+      "username": "user",
+      "password": "123456",
+      "firstName": "Kelvin",
+      "lastName": "Langosh",
+      "email": "Jerod14@hotmail.com",
+      "state": "Ohio",
+      "role": "user",
+      "display": "light"
+    },
+    {
+      "id": "9s41rp",
+      "username": "kelvin",
+      "password": "123456",
+      "firstName": "Kelvin",
+      "lastName": "Langosh",
+      "email": "Jerod14@hotmail.com",
+      "state": "Ohio",
+      "role": "user",
+      "display": "light"
+    },
+    {
+      "id": "08m6rx",
+      "username": "Molly",
+      "password": "123456",
+      "firstName": "Molly",
+      "lastName": "Purdy",
+      "email": "Hugh.Dach79@hotmail.com",
+      "state": "Rhode Island",
+      "role": "user",
+      "display": "light"
+    },
+    {
+      "id": "5ymtrc",
+      "username": "Henry",
+      "password": "123456",
+      "firstName": "Henry",
+      "lastName": "Lynch",
+      "email": "Camden.Macejkovic@yahoo.com",
+      "state": "California",
+      "role": "user",
+      "display": "light"
+    }
+   
+  ]
 }

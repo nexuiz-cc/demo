@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import TextField from '@mui/material/TextField';
 import styles from './login.module.scss';
 import Card from '@mui/material/Card';
@@ -17,7 +17,6 @@ function Login() {
   const [password, setPassword] = useState('');
   const [message1, setMessage1] = useState('');
   const [message2, setMessage2] = useState('');
-  const [sever,setSeverity]= useState('error');
   const navgate = useNavigate();
   const [inputError, setInputError] = useState(false);
   const [msg1, setMsg1] = useState('');
@@ -32,14 +31,28 @@ function Login() {
     if (reason === 'clickaway') { return; } setOpen2(false)
   };
 
+  function match(item: { username: string; }) {
+    return item.username === username
+  }
   const handleLogin = () => {
     login().then((res) => {
+      let result = res.data.find(match);
+      if (result === undefined) {
+        setMessage1('useranme or password is incorrect.')
+        setOpen1(true);
+      }
       if (username === res.data[0].username && password === res.data[0].password) {
-        setMessage1('login success');
+        setMessage1('Login Success.');
         setOpen1(true);
         let token = "token123";
         localStorage.setItem('userToken', token);
-        navgate(0);
+        setTimeout(() => {
+          console.log(result)
+          navgate('/',{state:{result}});
+          localStorage.setItem('username',result.username);
+          localStorage.setItem('id',result.id);
+          navgate(0);
+        }, 1000);
       } else {
         if (username === "") {
           setInputError(true);
@@ -50,8 +63,7 @@ function Login() {
           setMsg2('Please Enter password.');
         }
         if (username !== "" && username !== res.data[0].username) {
-          setMessage1('You Iput Useranme is incorrect.')
-          setOpen1(true);
+         
         }
         if (password !== "" && password !== res.data[0].password) {
           setMessage2('You Iput password is incorrect.')
@@ -103,10 +115,15 @@ function Login() {
       <Card component="form" className={styles.card} noValidate autoComplete="off">
         {card}
       </Card>
+
       <Snackbar anchorOrigin={{ vertical: 'top', horizontal: 'center' }} open={open1} >
-        <Alert onClose={handleClose1} variant="filled" severity="error" className={styles.alert1}>
-          {message1}
-        </Alert>
+        {message1 === 'Login Success.' ?
+          <Alert onClose={handleClose1} variant="filled" severity="success" className={styles.alert1}>
+            {message1}
+          </Alert> :
+          <Alert onClose={handleClose1} variant="filled" severity="error" className={styles.alert1}>
+            {message1}
+          </Alert>}
       </Snackbar>
       <Snackbar anchorOrigin={{ vertical: 'top', horizontal: 'center' }} open={open2} >
         <Alert onClose={handleClose2} variant="filled" severity="error" className={styles.alert2}>
