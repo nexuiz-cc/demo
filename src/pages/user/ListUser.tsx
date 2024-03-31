@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-pascal-case */
 import { useEffect, useMemo, useState } from 'react';
 import {
   MRT_EditActionButtons,
@@ -21,13 +22,14 @@ import {
   QueryClient,
   QueryClientProvider,
   useMutation,
-  useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
 import { type User, usStates } from './makeData';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { getUsers } from '../../api/user';
+import { getUsers,updateUser } from '../../api/user';
+import { relative } from 'path';
+import styles from './listUser.module.scss';
 
 
 const ListUser = () => {
@@ -115,6 +117,22 @@ const ListUser = () => {
           required: true,
           error: !!validationErrors?.username,
           helperText: validationErrors?.username,
+          //remove any previous validation errors when user focuses on the input
+          onFocus: () =>
+            setValidationErrors({
+              ...validationErrors,
+              username: undefined,
+            }),
+        },
+      },
+      {
+        accessorKey: 'password',
+        size: 10,
+        header: 'password',
+        muiEditTextFieldProps: {
+          required: true,
+          error: !!validationErrors?.password,
+          helperText: validationErrors?.password,
           //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
@@ -264,13 +282,13 @@ const ListUser = () => {
     //optionally customize modal content
     renderCreateRowDialogContent: ({ table, row, internalEditComponents }) => (
       <>
-        <DialogTitle variant="h3">Create New User</DialogTitle>
+        <DialogTitle variant="h3" sx={{backgroundColor:"#fff"}}>Create New User</DialogTitle>
         <DialogContent
-          sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
+          sx={{ display: 'flex', flexDirection: 'column', gap: '1rem', backgroundColor:'#fff'}}
         >
           {internalEditComponents} {/* or render custom edit components here */}
         </DialogContent>
-        <DialogActions>
+        <DialogActions className={styles.DialogActions}>
           <MRT_EditActionButtons variant="text" table={table} row={row} />
         </DialogActions>
       </>
@@ -278,13 +296,13 @@ const ListUser = () => {
     //optionally customize modal content
     renderEditRowDialogContent: ({ table, row, internalEditComponents }) => (
       <>
-        <DialogTitle variant="h3">Edit User</DialogTitle>
+        <DialogTitle variant="h3" sx={{backgroundColor:"#fff"}}>Edit User</DialogTitle>
         <DialogContent
-          sx={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}
+          sx={{ display: 'flex', flexDirection: 'column', gap: '1.5rem',backgroundColor:'#fff' }}
         >
           {internalEditComponents} {/* or render custom edit components here */}
         </DialogContent>
-        <DialogActions>
+        <DialogActions className={styles.DialogActions}>
           <MRT_EditActionButtons variant="text" table={table} row={row} />
         </DialogActions>
       </>
@@ -369,9 +387,9 @@ function useUpdateUser() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (user: User) => {
-      //send api update request here
-      await new Promise((resolve) => setTimeout(resolve, 1000)); //fake api call
-      return Promise.resolve();
+      updateUser(user.id,user).then((res)=>{
+        console.log(res)
+      })
     },
     //client side optimistic update
     onMutate: (newUserInfo: User) => {

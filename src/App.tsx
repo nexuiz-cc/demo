@@ -21,7 +21,7 @@ import { Route, Routes, useLocation } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import ListUser from './pages/user/ListUser';
 import NewUser from './pages/NewUser';
-import { Button } from '@mui/material';
+import { Button, PaletteOptions, SimplePaletteColorOptions, TypeText } from '@mui/material';
 import { changeMode } from './api/user';
 const ColorModeContext = React.createContext({ toggleColorMode: () => { } });
 const drawerWidth = 240;
@@ -161,7 +161,22 @@ function App() {
     </Box>
   );
 }
+interface ExtendedPaletteColorOptions extends SimplePaletteColorOptions {
+  darker?: string
+  other?:string
+}
 
+interface ExtendedPaletteOptions extends PaletteOptions {
+  primary: ExtendedPaletteColorOptions
+  secondary: ExtendedPaletteColorOptions
+  text: Partial<TypeText>
+  error: ExtendedPaletteColorOptions
+  warning: ExtendedPaletteColorOptions
+  info: ExtendedPaletteColorOptions
+  success: ExtendedPaletteColorOptions
+  // And your custom palette options if you defined them, e.g:
+  other: ExtendedPaletteColorOptions
+}
 export default function ToggleColorMode() {
   const loc = useLocation();
 
@@ -174,8 +189,8 @@ export default function ToggleColorMode() {
       mode,
       ...(mode === 'light'
         ? {
-          // 👇 palette values for light mode
           primary: { main: '#B5C0D0' },
+          secondary:{main:'#5755FE'},
           background: {
             default: '#e1e1e3',
             paper: '#B5C0D0',
@@ -185,8 +200,8 @@ export default function ToggleColorMode() {
           },
         }
         : {
-          // 👇 palette values for dark mode
           primary: { main: '#1B1A55'},
+          secondary:{main:'#5755FE'},
           background: {
             default: '#3b3a39',
             paper: '#1B1A55',
