@@ -108,7 +108,12 @@ function App() {
         <Toolbar>
           <Typography variant='h6' noWrap component='div'>My APP</Typography>
           <Typography variant='h6' noWrap component='div' className='username'>{username}</Typography>
-          <Button variant="contained" onClick={logout} className='btn'>Logout</Button>
+          {theme.palette.mode==='light'?  <Button variant="contained" onClick={logout} className='btn'
+          sx={{backgroundColor:"#3B44F6",color:"#fff"}}
+          >Logout</Button>:
+          <Button variant="contained" onClick={logout} className='btn'
+          sx={{backgroundColor:"#2D3250"}}>Logout</Button>}
+        
         </Toolbar>
       </AppBar>
       <Drawer variant='permanent' open={open}>
@@ -170,10 +175,10 @@ export default function ToggleColorMode() {
       ...(mode === 'light'
         ? {
           // 👇 palette values for light mode
-          primary: { main: '#362FD9' },
+          primary: { main: '#B5C0D0' },
           background: {
             default: '#e1e1e3',
-            paper: '#B6BBC4',
+            paper: '#B5C0D0',
           },
           text: {
             primary: '#000000',
@@ -181,10 +186,10 @@ export default function ToggleColorMode() {
         }
         : {
           // 👇 palette values for dark mode
-          primary: { main: '#fff' },
+          primary: { main: '#1B1A55'},
           background: {
             default: '#3b3a39',
-            paper: '#010030',
+            paper: '#1B1A55',
           },
           text: {
             primary: '#fff',

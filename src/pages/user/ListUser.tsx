@@ -15,6 +15,7 @@ import {
   DialogTitle,
   IconButton,
   Tooltip,
+  useTheme,
 } from '@mui/material';
 import {
   QueryClient,
@@ -30,6 +31,7 @@ import { getUsers } from '../../api/user';
 
 
 const ListUser = () => {
+  const theme = useTheme();
   const [validationErrors, setValidationErrors] = useState<
     Record<string, string | undefined>
   >({});
@@ -40,10 +42,11 @@ const ListUser = () => {
         accessorKey: 'id',
         header: 'Id',
         enableEditing: false,
-        size: 80,
+        size: 10,
       },
       {
         accessorKey: 'firstName',
+        size: 10,
         header: 'First Name',
         muiEditTextFieldProps: {
           required: true,
@@ -60,6 +63,7 @@ const ListUser = () => {
       },
       {
         accessorKey: 'lastName',
+        size: 10,
         header: 'Last Name',
         muiEditTextFieldProps: {
           required: true,
@@ -73,9 +77,11 @@ const ListUser = () => {
             }),
         },
       },
+
       {
         accessorKey: 'email',
         header: 'Email',
+        size: 10,
         muiEditTextFieldProps: {
           type: 'email',
           required: true,
@@ -91,6 +97,7 @@ const ListUser = () => {
       },
       {
         accessorKey: 'state',
+        size: 10,
         header: 'State',
         editVariant: 'select',
         editSelectOptions: usStates,
@@ -98,6 +105,54 @@ const ListUser = () => {
           select: true,
           error: !!validationErrors?.state,
           helperText: validationErrors?.state,
+        },
+      },
+      {
+        accessorKey: 'username',
+        size: 10,
+        header: 'Username',
+        muiEditTextFieldProps: {
+          required: true,
+          error: !!validationErrors?.username,
+          helperText: validationErrors?.username,
+          //remove any previous validation errors when user focuses on the input
+          onFocus: () =>
+            setValidationErrors({
+              ...validationErrors,
+              username: undefined,
+            }),
+        },
+      },
+      {
+        accessorKey: 'role',
+        size: 10,
+        header: 'role',
+        muiEditTextFieldProps: {
+          required: true,
+          error: !!validationErrors?.role,
+          helperText: validationErrors?.role,
+          //remove any previous validation errors when user focuses on the input
+          onFocus: () =>
+            setValidationErrors({
+              ...validationErrors,
+              role: undefined,
+            }),
+        },
+      },
+      {
+        accessorKey: 'display',
+        size: 10,
+        header: 'display',
+        muiEditTextFieldProps: {
+          required: true,
+          error: !!validationErrors?.display,
+          helperText: validationErrors?.display,
+          //remove any previous validation errors when user focuses on the input
+          onFocus: () =>
+            setValidationErrors({
+              ...validationErrors,
+              display: undefined,
+            }),
         },
       },
     ],
@@ -161,7 +216,7 @@ const ListUser = () => {
 
   }, []);
 
-  
+
 
 
   //DELETE action
@@ -179,6 +234,18 @@ const ListUser = () => {
     enableEditing: true,
     positionActionsColumn: 'last',
     getRowId: (row) => row.id,
+    muiTableHeadCellProps: ({ column }) => ({
+      //conditionally style pinned columns
+      sx: {
+        backgroundColor: theme.palette.primary.main
+      },
+    }),
+    muiTableBodyCellProps: ({ column }) => ({
+      //conditionally style pinned columns
+      sx: {
+        fontWeight: column.getIsPinned() ? 'bold' : 'normal',
+      },
+    }),
     muiToolbarAlertBannerProps: isError
       ? {
         color: 'error',
@@ -187,7 +254,7 @@ const ListUser = () => {
       : undefined,
     muiTableContainerProps: {
       sx: {
-        minHeight: '500px',
+        minHeight: '450px',
       },
     },
     onCreatingRowCancel: () => setValidationErrors({}),
@@ -237,8 +304,11 @@ const ListUser = () => {
       </Box>
     ),
     renderTopToolbarCustomActions: ({ table }) => (
+      <>
+
       <Button
         variant="contained"
+        sx={{marginTop:1,marginBottom:1}}
         onClick={() => {
           table.setCreatingRow(true); //simplest way to open the create row modal with no default values
           //or you can pass in a row object to set default values with the `createRow` helper function
@@ -250,7 +320,8 @@ const ListUser = () => {
         }}
       >
         Create New User
-      </Button>
+
+      </Button></>
     ),
     state: {
       isLoading,
@@ -259,7 +330,7 @@ const ListUser = () => {
     },
   });
 
-  return <MaterialReactTable table={table} />;
+  return <MaterialReactTable table={table} />
 };
 
 //CREATE hook (post new user to api)
@@ -285,7 +356,8 @@ function useCreateUser() {
           ] as User[],
       );
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
+    //refetch users after mutation, disabled for demo
+    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), 
   });
 }
 
@@ -309,7 +381,8 @@ function useUpdateUser() {
         ),
       );
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
+    //refetch users after mutation, disabled for demo
+    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), 
   });
 }
 
@@ -328,7 +401,8 @@ function useDeleteUser() {
         prevUsers?.filter((user: User) => user.id !== userId),
       );
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
+    //refetch users after mutation, disabled for demo
+    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), 
   });
 }
 
