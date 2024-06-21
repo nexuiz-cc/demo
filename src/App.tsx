@@ -17,12 +17,14 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import PersonIcon from '@mui/icons-material/Person';
-import { Route, Routes, useLocation } from 'react-router-dom';
+import AssignmentIcon from '@mui/icons-material/Assignment';
+import { Route, Routes } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import ListUser from './pages/user/ListUser';
 import NewUser from './pages/NewUser';
-import { Button, PaletteOptions, SimplePaletteColorOptions, TypeText } from '@mui/material';
+import { Button } from '@mui/material';
 import { changeMode } from './api/user';
+import TaskList from './pages/task/TaskList';
 const ColorModeContext = React.createContext({ toggleColorMode: () => { } });
 const drawerWidth = 240;
 
@@ -99,6 +101,11 @@ function App() {
     localStorage.setItem('userToken', 'logout')
     window.location.reload();
   }
+
+  const menuItems = [
+    { name: 'User', path: '/user', icon: <PersonIcon /> },
+    { name: 'Task', path: '/task', icon: <AssignmentIcon /> },
+  ];
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
@@ -106,20 +113,20 @@ function App() {
         <Toolbar>
           <Typography variant='h6' noWrap component='div'>My APP</Typography>
           <Typography variant='h6' noWrap component='div' className='username'>{username}</Typography>
-        
-            {theme.palette.mode === 'light' ? <Button variant="contained" onClick={logout} className='btn'
-              sx={{ backgroundColor: "#3B44F6", color: "#fff" }}
-            >Logout</Button> :
-              <Button variant="contained" onClick={logout} className='btn'
-                sx={{ backgroundColor: "#2D3250" }}>Logout</Button>}
-            <ListItemButton
-             className='colorModeBtn'
-              onClick={colorMode.toggleColorMode}>
-              <ListItemIcon >
-                {theme.palette.mode === 'dark' ? <Brightness4Icon /> : <Brightness7Icon />}
-              </ListItemIcon>
-            </ListItemButton>
-       
+
+          {theme.palette.mode === 'light' ? <Button variant="contained" onClick={logout} className='btn'
+            sx={{ backgroundColor: "#3B44F6", color: "#fff" }}
+          >Logout</Button> :
+            <Button variant="contained" onClick={logout} className='btn'
+              sx={{ backgroundColor: "#2D3250" }}>Logout</Button>}
+          <ListItemButton
+            className='colorModeBtn'
+            onClick={colorMode.toggleColorMode}>
+            <ListItemIcon >
+              {theme.palette.mode === 'dark' ? <Brightness4Icon /> : <Brightness7Icon />}
+            </ListItemIcon>
+          </ListItemButton>
+
         </Toolbar>
       </AppBar>
       <Drawer variant='permanent' open={open}>
@@ -127,21 +134,14 @@ function App() {
         <List>
           <ListItem sx={{ height: 62, top: -8, left: 5, fontSize: 20 }}>Student Management</ListItem>
           <ListItem disablePadding sx={{ display: 'block' }}>
-            <ListItemButton
-              sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5 }}
-              href='/user'>
-              <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center' }}>
-                <PersonIcon />
-              </ListItemIcon>
-              <ListItemText
-                primary='User'
-                sx={{ opacity: open ? 1 : 0 }}
-              />
-            </ListItemButton>
-          </ListItem>
-
-          <ListItem>
-
+            {menuItems.map((item) => (
+              <ListItemButton key={item.name} sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5 }} href={item.path}>
+                <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center' }}>
+                  {item.icon}
+                </ListItemIcon>
+                <ListItemText primary={item.name} sx={{ opacity: open ? 1 : 0 }} />
+              </ListItemButton>
+            ))}
           </ListItem>
         </List>
         <Divider />
@@ -154,6 +154,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path='/user' element={<ListUser />} />
           <Route path='/newUser' element={<NewUser />} />
+          <Route path='/task' element={<TaskList />} />
         </Routes>
       </Box>
     </Box>
@@ -162,6 +163,7 @@ function App() {
 
 export default function ToggleColorMode() {
   const storedMode = localStorage.getItem('colorMode') || 'light';
+  const menuItems = [{ name: 'User', path: './user' }, { name: 'Task', path: './task' }]
   // 将存储的模式转换为 'light' 或 'dark' 类型
   const initialMode = storedMode === 'light' ? 'light' : 'dark';
   const [mode, setMode] = React.useState<'light' | 'dark'>(initialMode);

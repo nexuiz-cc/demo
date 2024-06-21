@@ -54,6 +54,17 @@
       "state": "California",
       "role": "user",
       "display": "light"
+    },
+    {
+      "id": "6",
+      "firstName": "11",
+      "lastName": "22",
+      "email": "33@gmail.com",
+      "state": "Colorado",
+      "username": "11",
+      "password": "22",
+      "role": "admin",
+      "display": "light"
     }
   ]
 }

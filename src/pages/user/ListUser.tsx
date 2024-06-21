@@ -30,6 +30,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { getUsers,updateUser } from '../../api/user';
 import { relative } from 'path';
 import styles from './listUser.module.scss';
+import axios from 'axios';
 
 
 const ListUser = () => {
@@ -43,7 +44,6 @@ const ListUser = () => {
       {
         accessorKey: 'id',
         header: 'Id',
-        enableEditing: false,
         size: 10,
       },
       {
@@ -353,29 +353,12 @@ const ListUser = () => {
 
 //CREATE hook (post new user to api)
 function useCreateUser() {
-  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (user: User) => {
       //send api update request here
-      await new Promise((resolve) => setTimeout(resolve, 1)); //fake api call
+      axios.post('http://localhost:8082/users',user)
       return Promise.resolve();
-    },
-    //client side optimistic update
-    onMutate: (newUserInfo: User) => {
-      queryClient.setQueryData(
-        ['users'],
-        (prevUsers: any) =>
-          [
-            ...prevUsers,
-            {
-              ...newUserInfo,
-              id: (Math.random() + 1).toString(36).substring(7),
-            },
-          ] as User[],
-      );
-    },
-    //refetch users after mutation, disabled for demo
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), 
+    }
   });
 }
 
