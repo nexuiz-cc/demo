@@ -8,5 +8,11 @@ body{
 }
 .username{
   position: relative;
-  left: 1360px;
+  left: 1350px;
+}
+
+.colorModeBtn{
+  position: relative;
+  left: 1260px;
+  max-width: 60px;
 }

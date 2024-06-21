@@ -90,12 +90,10 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 }));
 
 
-const userId =localStorage.getItem('id');
-
 function App() {
-  const theme = useTheme();  
+  const theme = useTheme();
   const username = localStorage.getItem('username');
-  const [open, setOpen] = React.useState(true);
+  const [open] = React.useState(true);
   const colorMode = React.useContext(ColorModeContext);
   const logout = () => {
     localStorage.setItem('userToken', 'logout')
@@ -108,12 +106,20 @@ function App() {
         <Toolbar>
           <Typography variant='h6' noWrap component='div'>My APP</Typography>
           <Typography variant='h6' noWrap component='div' className='username'>{username}</Typography>
-          {theme.palette.mode==='light'?  <Button variant="contained" onClick={logout} className='btn'
-          sx={{backgroundColor:"#3B44F6",color:"#fff"}}
-          >Logout</Button>:
-          <Button variant="contained" onClick={logout} className='btn'
-          sx={{backgroundColor:"#2D3250"}}>Logout</Button>}
         
+            {theme.palette.mode === 'light' ? <Button variant="contained" onClick={logout} className='btn'
+              sx={{ backgroundColor: "#3B44F6", color: "#fff" }}
+            >Logout</Button> :
+              <Button variant="contained" onClick={logout} className='btn'
+                sx={{ backgroundColor: "#2D3250" }}>Logout</Button>}
+            <ListItemButton
+             className='colorModeBtn'
+              onClick={colorMode.toggleColorMode}>
+              <ListItemIcon >
+                {theme.palette.mode === 'dark' ? <Brightness4Icon /> : <Brightness7Icon />}
+              </ListItemIcon>
+            </ListItemButton>
+       
         </Toolbar>
       </AppBar>
       <Drawer variant='permanent' open={open}>
@@ -135,15 +141,7 @@ function App() {
           </ListItem>
 
           <ListItem>
-            <ListItemButton
-              sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5 }}
-              onClick={colorMode.toggleColorMode}>
-              <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center' }}>{theme.palette.mode === 'dark' ? <Brightness4Icon /> : <Brightness7Icon />}</ListItemIcon>
-              {theme.palette.mode === 'dark' ?
-                <ListItemText primary='TO LightMode' sx={{ opacity: open ? 1 : 0 }} />
-                : <ListItemText primary='TO DarkMode' sx={{ opacity: open ? 1 : 0 }} />
-              }
-            </ListItemButton>
+
           </ListItem>
         </List>
         <Divider />
@@ -161,25 +159,8 @@ function App() {
     </Box>
   );
 }
-interface ExtendedPaletteColorOptions extends SimplePaletteColorOptions {
-  darker?: string
-  other?:string
-}
 
-interface ExtendedPaletteOptions extends PaletteOptions {
-  primary: ExtendedPaletteColorOptions
-  secondary: ExtendedPaletteColorOptions
-  text: Partial<TypeText>
-  error: ExtendedPaletteColorOptions
-  warning: ExtendedPaletteColorOptions
-  info: ExtendedPaletteColorOptions
-  success: ExtendedPaletteColorOptions
-  // And your custom palette options if you defined them, e.g:
-  other: ExtendedPaletteColorOptions
-}
 export default function ToggleColorMode() {
-  const loc = useLocation();
-
   const storedMode = localStorage.getItem('colorMode') || 'light';
   // 将存储的模式转换为 'light' 或 'dark' 类型
   const initialMode = storedMode === 'light' ? 'light' : 'dark';
@@ -190,7 +171,7 @@ export default function ToggleColorMode() {
       ...(mode === 'light'
         ? {
           primary: { main: '#B5C0D0' },
-          secondary:{main:'#5755FE'},
+          secondary: { main: '#5755FE' },
           background: {
             default: '#e1e1e3',
             paper: '#B5C0D0',
@@ -200,8 +181,8 @@ export default function ToggleColorMode() {
           },
         }
         : {
-          primary: { main: '#1B1A55'},
-          secondary:{main:'#5755FE'},
+          primary: { main: '#1B1A55' },
+          secondary: { main: '#5755FE' },
           background: {
             default: '#3b3a39',
             paper: '#1B1A55',
@@ -223,9 +204,7 @@ export default function ToggleColorMode() {
         // 保存模式到本地存储
         localStorage.setItem('colorMode', mode === 'light' ? 'dark' : 'light');
         // 发送模式更改请求
-        changeMode(1, mode === 'light' ? 'dark' : 'light').then((res) => {
-          console.log(res);
-        });
+        changeMode(1, mode === 'light' ? 'dark' : 'light')
       },
     }),
     [mode]
