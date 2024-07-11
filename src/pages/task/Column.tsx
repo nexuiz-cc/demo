@@ -15,13 +15,14 @@ const Column: FC<ColumnType> = ({ id, title, cards }) => {
     // ソートを行うためのContextです。
     // strategyは4つほど存在しますが、今回は縦・横移動可能なリストを作るためrectSortingStrategyを採用
     <SortableContext id={id} items={cards} strategy={rectSortingStrategy}>
+      
       <div
         ref={setNodeRef}
         style={{
-          width: "510px",
+          width: "420px",
           background: "rgba(245,247,249,1.00)",
-          marginRight: "10px",
-          height:'750px'
+          height:'750px',
+          marginLeft:"50px"
         }}
       >
         <p

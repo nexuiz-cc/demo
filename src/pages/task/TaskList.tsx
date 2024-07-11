@@ -7,47 +7,58 @@ import {
   useSensor,
   useSensors,
   DragEndEvent,
-  DragOverEvent
+  DragOverEvent,
 } from "@dnd-kit/core";
 import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
+import { v4 as uuidv4 } from 'uuid';
+import { useTheme } from "@mui/material/styles";
 import Column, { ColumnType } from "./Column";
 import { useState } from "react";
+import { Button } from "@mui/material";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
+import TextField from "@mui/material/TextField";
+import "./task.css";
 
 export default function TaskList() {
-  // 仮データを定義
+  let uuId = uuidv4();
   const data: ColumnType[] = [
     {
-      id: "Column1",
+      id: '1',
       title: "TODO",
       cards: [
         {
-          id: "Card1",
-          title: "Card1",
-          content:'card1 content'
+          id: 'a',
+          title: "title 1",
+          content: "todo",
         },
-        {
-          id: "Card2",
-          title: "Card2",
-          content:'card2 content'
-        }
-      ]
+      ],
     },
     {
-      id: "Column2",
+      id: '2',
       title: "DOING",
       cards: [
-        
-      ]
-    },{
-      id: "Column3",
+        {
+        id: 'b',
+        title: "title 2",
+        content: "doing",
+      }],
+    },
+    {
+      id: '3',
       title: "DONE",
-      cards: [
-        
-      ]
-    }
+      cards: [],
+    },
   ];
   const [columns, setColumns] = useState<ColumnType[]>(data);
+  const theme = useTheme();
+  const [open, setOpen] = useState(false);
 
+  const handleClose = () => {
+    setOpen(false);
+  };
   const findColumn = (unique: string | null) => {
     if (!unique) {
       return null;
@@ -93,7 +104,7 @@ export default function TaskList() {
           c.cards = [
             ...overItems.slice(0, newIndex()),
             activeItems[activeIndex],
-            ...overItems.slice(newIndex(), overItems.length)
+            ...overItems.slice(newIndex(), overItems.length),
           ];
           return c;
         } else {
@@ -105,6 +116,7 @@ export default function TaskList() {
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
+
     const activeId = String(active.id);
     const overId = over ? String(over.id) : null;
     const activeColumn = findColumn(activeId);
@@ -131,9 +143,13 @@ export default function TaskList() {
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates
+      coordinateGetter: sortableKeyboardCoordinates,
     })
   );
+
+  const newTask = () => {
+    setOpen(true);
+  };
   return (
     // 今回は長くなってしまうためsensors、collisionDetectionなどに関しての説明は省きます。
     // ひとまずは一番使われていそうなものを置いています。
@@ -145,8 +161,32 @@ export default function TaskList() {
     >
       <div
         className="App"
-        style={{ display: "flex", flexDirection: "row", padding: "20px" }}
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          padding: "15px",
+          justifyContent: "center",
+        }}
       >
+        {theme.palette.mode === "light" ? (
+          <Button
+            variant="contained"
+            onClick={newTask}
+            className="newBtn"
+            sx={{ backgroundColor: "#3B44F6", color: "#fff", display: "block" }}
+          >
+            New Task
+          </Button>
+        ) : (
+          <Button
+            variant="contained"
+            onClick={newTask}
+            className="newBtn"
+            sx={{ backgroundColor: "#2D3250" }}
+          >
+            New Task
+          </Button>
+        )}
         {columns.map((column) => (
           <Column
             key={column.id}
@@ -155,6 +195,97 @@ export default function TaskList() {
             cards={column.cards}
           ></Column>
         ))}
+
+        <Dialog
+          open={open}
+          onClose={handleClose}
+          PaperProps={{
+            component: "form",
+            onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
+              event.preventDefault();
+              const formData = new FormData(event.currentTarget);
+              const formJson = Object.fromEntries((formData as any).entries());
+              console.log(formJson);
+              columns[0].cards.push({
+                id:uuId,
+                title: formJson.title,
+                content:formJson.content
+              })
+              setColumns(columns);
+              handleClose();
+            },
+          }}
+        >
+          <DialogTitle>Create a new task...</DialogTitle>
+          <DialogContent>
+            <TextField
+              autoFocus
+              required
+              margin="dense"
+              id="title"
+              name="title"
+              label="Task Title"
+              type="text"
+              fullWidth
+              variant="standard"
+            />
+            <TextField
+              autoFocus
+              required
+              margin="dense"
+              id="content"
+              name="content"
+              label="Task Content"
+              type="text"
+              fullWidth
+              variant="standard"
+            />
+          </DialogContent>
+
+          {theme.palette.mode === "light" ? (
+            <DialogActions>
+              <Button
+                variant="contained"
+                onClick={handleClose}
+                sx={{
+                  backgroundColor: "#3B44F6",
+                  color: "#fff",
+                  display: "block",
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                variant="contained"
+                sx={{
+                  backgroundColor: "#3B44F6",
+                  color: "#fff",
+                  display: "block",
+                }}
+              >
+                Subscribe
+              </Button>
+            </DialogActions>
+          ) : (
+            <DialogActions>
+              <Button
+                variant="contained"
+                onClick={handleClose}
+                sx={{ backgroundColor: "#2D3250" }}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                variant="contained"
+                sx={{ backgroundColor: "#2D3250" }}
+              >
+                Subscribe
+              </Button>
+            </DialogActions>
+          )}
+        </Dialog>
       </div>
     </DndContext>
   );

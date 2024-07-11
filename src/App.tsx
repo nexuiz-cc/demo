@@ -163,7 +163,6 @@ function App() {
 
 export default function ToggleColorMode() {
   const storedMode = localStorage.getItem('colorMode') || 'light';
-  const menuItems = [{ name: 'User', path: './user' }, { name: 'Task', path: './task' }]
   // 将存储的模式转换为 'light' 或 'dark' 类型
   const initialMode = storedMode === 'light' ? 'light' : 'dark';
   const [mode, setMode] = React.useState<'light' | 'dark'>(initialMode);
