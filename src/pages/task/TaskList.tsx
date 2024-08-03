@@ -13,7 +13,7 @@ import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import { v4 as uuidv4 } from 'uuid';
 import { useTheme } from "@mui/material/styles";
 import Column, { ColumnType } from "./Column";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@mui/material";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -21,38 +21,60 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
 import "./task.css";
+import axios from "axios";
 
 export default function TaskList() {
   let uuId = uuidv4();
+  const [todoTasks, setTodo] = useState([]);
+  const [doingTasks, setDoing] = useState([]);
+  const [doneTasks, setDone] = useState([]);
+
+
+  useEffect(() => {
+    const url = "http://localhost:8082/tasks";
+    axios.get(url).then((res) => {
+      setColumns([
+        {
+          id: 'todo',
+          title: "TODO",
+          cards: res.data.todo,
+        },
+        {
+          id: 'doing',
+          title: "DOING",
+          cards: res.data.doing,
+        },
+        {
+          id: 'done',
+          title: "DONE",
+          cards: res.data.done
+        },
+      ]);
+    })
+      .catch((error) => {
+        console.error("There was an error fetching the data:", error);
+      });
+  }, []);
   const data: ColumnType[] = [
     {
-      id: '1',
+      id: 'todo',
       title: "TODO",
-      cards: [
-        {
-          id: 'a',
-          title: "title 1",
-          content: "todo",
-        },
-      ],
+      cards: [...todoTasks],
     },
     {
-      id: '2',
+      id: 'doing',
       title: "DOING",
-      cards: [
-        {
-        id: 'b',
-        title: "title 2",
-        content: "doing",
-      }],
+      cards: [...doingTasks]
+
     },
     {
-      id: '3',
+      id: 'done',
       title: "DONE",
-      cards: [],
+      cards: [...doneTasks],
     },
   ];
   const [columns, setColumns] = useState<ColumnType[]>(data);
+
   const theme = useTheme();
   const [open, setOpen] = useState(false);
 
@@ -78,6 +100,8 @@ export default function TaskList() {
 
   const handleDragOver = (event: DragOverEvent) => {
     const { active, over, delta } = event;
+    console.log('over:', over);
+    console.log('active:', active);
     const activeId = String(active.id);
     const overId = over ? String(over.id) : null;
     const activeColumn = findColumn(activeId);
@@ -116,7 +140,6 @@ export default function TaskList() {
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
-
     const activeId = String(active.id);
     const overId = over ? String(over.id) : null;
     const activeColumn = findColumn(activeId);
@@ -138,6 +161,7 @@ export default function TaskList() {
         });
       });
     }
+
   };
 
   const sensors = useSensors(
@@ -151,8 +175,6 @@ export default function TaskList() {
     setOpen(true);
   };
   return (
-    // 今回は長くなってしまうためsensors、collisionDetectionなどに関しての説明は省きます。
-    // ひとまずは一番使われていそうなものを置いています。
     <DndContext
       sensors={sensors}
       collisionDetection={closestCorners}
@@ -207,9 +229,9 @@ export default function TaskList() {
               const formJson = Object.fromEntries((formData as any).entries());
               console.log(formJson);
               columns[0].cards.push({
-                id:uuId,
+                id: uuId,
                 title: formJson.title,
-                content:formJson.content
+                content: formJson.content
               })
               setColumns(columns);
               handleClose();

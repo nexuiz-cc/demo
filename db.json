@@ -66,5 +66,20 @@
       "role": "admin",
       "display": "light"
     }
-  ]
+  ],
+  "tasks": {
+    "todo": [
+      {
+        "id": "abgc1",
+        "title": "title",
+        "content": "content"
+      }
+    ],
+    "doing": [
+
+    ],
+    "done": [
+      
+    ]
+  }
 }
