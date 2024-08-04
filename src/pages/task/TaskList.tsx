@@ -10,7 +10,7 @@ import {
   DragOverEvent,
 } from "@dnd-kit/core";
 import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 import { useTheme } from "@mui/material/styles";
 import Column, { ColumnType } from "./Column";
 import { useState } from "react";
@@ -24,35 +24,39 @@ import "./task.css";
 
 export default function TaskList() {
   let uuId = uuidv4();
-  const data: ColumnType[] = [
+  let data: ColumnType[] = [
     {
-      id: '1',
+      id: "todo",
       title: "TODO",
       cards: [
         {
-          id: 'a',
+          id: "a",
           title: "title 1",
           content: "todo",
         },
       ],
     },
     {
-      id: '2',
+      id: "doing",
       title: "DOING",
       cards: [
         {
-        id: 'b',
-        title: "title 2",
-        content: "doing",
-      }],
+          id: "b",
+          title: "title 2",
+          content: "doing",
+        },
+      ],
     },
     {
-      id: '3',
+      id: "3",
       title: "DONE",
       cards: [],
     },
   ];
   const [columns, setColumns] = useState<ColumnType[]>(data);
+
+  const [dragBefore, setDragBefore] = useState();
+  const [dragAfter, setDragAfter] = useState();
   const theme = useTheme();
   const [open, setOpen] = useState(false);
 
@@ -74,6 +78,10 @@ export default function TaskList() {
     });
     const columnId = itemWithColumnId.find((i) => i.itemId === id)?.columnId;
     return columns.find((c) => c.id === columnId) ?? null;
+  };
+
+  const handleDragStart = (event: DragOverEvent) => {
+    setDragBefore(event.active.data.current?.sortable.containerId);
   };
 
   const handleDragOver = (event: DragOverEvent) => {
@@ -116,7 +124,7 @@ export default function TaskList() {
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
-
+    setDragAfter(event.active.data.current?.sortable.containerId);
     const activeId = String(active.id);
     const overId = over ? String(over.id) : null;
     const activeColumn = findColumn(activeId);
@@ -138,6 +146,13 @@ export default function TaskList() {
         });
       });
     }
+    // todo
+    if (dragBefore === "todo") {
+      const filteredData = data.filter((item) => item.id === "todo");
+      let temp = filteredData[0].cards.filter((card)=>card.id !== activeId)
+     data[0].cards = temp;
+      console.log("data:",data);
+    }
   };
 
   const sensors = useSensors(
@@ -158,6 +173,7 @@ export default function TaskList() {
       collisionDetection={closestCorners}
       onDragEnd={handleDragEnd}
       onDragOver={handleDragOver}
+      onDragStart={handleDragStart}
     >
       <div
         className="App"
@@ -207,10 +223,10 @@ export default function TaskList() {
               const formJson = Object.fromEntries((formData as any).entries());
               console.log(formJson);
               columns[0].cards.push({
-                id:uuId,
+                id: uuId,
                 title: formJson.title,
-                content:formJson.content
-              })
+                content: formJson.content,
+              });
               setColumns(columns);
               handleClose();
             },
