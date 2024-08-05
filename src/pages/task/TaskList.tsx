@@ -21,6 +21,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
 import "./task.css";
+import axios from "axios";
 
 export default function TaskList() {
   let uuId = uuidv4();
@@ -55,8 +56,8 @@ export default function TaskList() {
   ];
   const [columns, setColumns] = useState<ColumnType[]>(data);
 
-  const [dragBefore, setDragBefore] = useState();
-  const [dragAfter, setDragAfter] = useState();
+  const [dragBefore, setDragBefore] = useState("");
+  const [dragAfter, setDragAfter] = useState("");
   const theme = useTheme();
   const [open, setOpen] = useState(false);
 
@@ -125,10 +126,16 @@ export default function TaskList() {
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     setDragAfter(event.active.data.current?.sortable.containerId);
+
+    if (event) {
+      setDragAfter(event.active.data.current!.sortable.containerId);
+    }
+
     const activeId = String(active.id);
     const overId = over ? String(over.id) : null;
     const activeColumn = findColumn(activeId);
     const overColumn = findColumn(overId);
+    console.log("overColumn:", overColumn);
     if (!activeColumn || !overColumn || activeColumn !== overColumn) {
       return null;
     }
@@ -146,15 +153,39 @@ export default function TaskList() {
         });
       });
     }
-    // todo
+
     if (dragBefore === "todo") {
       const filteredData = data.filter((item) => item.id === "todo");
-      let temp = filteredData[0].cards.filter((card)=>card.id !== activeId)
-     data[0].cards = temp;
-      console.log("data:",data);
+      let temp = filteredData[0].cards.filter((card) => card.id !== activeId);
+      data[0].cards = temp;
+    } else if (dragBefore === "doing") {
+      const filteredData = data.filter((item) => item.id === "doing");
+      let temp = filteredData[0].cards.filter((card) => card.id !== activeId);
+      data[0].cards = temp;
+    } else if (dragBefore === "done") {
+      const filteredData = data.filter((item) => item.id === "done");
+      let temp = filteredData[0].cards.filter((card) => card.id !== activeId);
+      data[0].cards = temp;
     }
+
+    if (overColumn.id === "todo") {
+      data[0].cards = activeColumn.cards;
+    } else if (overColumn.id === "doing") {
+      data[1].cards = activeColumn.cards;
+    } else if (overColumn.id === "done") {
+      data[2].cards = activeColumn.cards;
+    }
+    console.log("data:", data);
+    axios.put("http://localhost:8082/tasks", {id:1,data:data}).then((response) => {
+      console.log(response);
+    })
+      
+      
   };
 
+  // const handleDragMove = (event: DragEndEvent) => {
+  //   console.log("handleDragMove:", event);
+  // };
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {

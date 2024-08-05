@@ -67,35 +67,36 @@
       "display": "light"
     }
   ],
-
-  "tasks":
-    [
-    {
-      "id": "todo",
-      "title": "TODO",
-      "cards": [
-        {
-          "id": "a",
-          "title": "title 1",
-          "content": "todo"
-        }
-      ]
-    },
-    {
-      "id": "doing",
-      "title": "DOING",
-      "cards": [
-        {
-          "id": "b",
-          "title": "title 2",
-          "content": "doing"
-        }
-      ]
-    },
-    {
-      "id": "3",
-      "title": "DONE",
-      "cards": []
-    }
-  ]
+  "tasks": {
+    "id": 1,
+    "data": [
+      {
+        "id": "todo",
+        "title": "TODO",
+        "cards": [
+          {
+            "id": "a",
+            "title": "title 1",
+            "content": "todo"
+          }
+        ]
+      },
+      {
+        "id": "doing",
+        "title": "DOING",
+        "cards": [
+          {
+            "id": "b",
+            "title": "title 2",
+            "content": "doing"
+          }
+        ]
+      },
+      {
+        "id": "3",
+        "title": "DONE",
+        "cards": []
+      }
+    ]
+  }
 }
