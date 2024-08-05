@@ -25,6 +25,7 @@ import NewUser from './pages/NewUser';
 import { Button } from '@mui/material';
 import { changeMode } from './api/user';
 import TaskList from './pages/task/TaskList';
+import CalendarPage from './pages/calendar/CalendarPage';
 const ColorModeContext = React.createContext({ toggleColorMode: () => { } });
 const drawerWidth = 240;
 
@@ -105,11 +106,12 @@ function App() {
   const menuItems = [
     { name: 'User', path: '/user', icon: <PersonIcon /> },
     { name: 'Task', path: '/task', icon: <AssignmentIcon /> },
+    { name: 'Calendar', path: '/calendar', icon: <AssignmentIcon /> },
   ];
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
-      <AppBar sx={{ width: 1680 }}>
+      <AppBar sx={{ width: "87.5%" }}>
         <Toolbar>
           <Typography variant='h6' noWrap component='div'>My APP</Typography>
           <Typography variant='h6' noWrap component='div' className='username'>{username}</Typography>
@@ -155,6 +157,7 @@ function App() {
           <Route path='/user' element={<ListUser />} />
           <Route path='/newUser' element={<NewUser />} />
           <Route path='/task' element={<TaskList />} />
+          <Route path='/calendar' element={<CalendarPage />} />
         </Routes>
       </Box>
     </Box>
